@@ -1,0 +1,10 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/laravel:$_CI_COMMIT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/laravel:$_CI_COMMIT_SHA']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['beta','run', 'deploy', 'laravel1', '--image', 'gcr.io/$PROJECT_ID/laravel:$_CI_COMMIT_SHA', '--region', 'asia-southeast2', '--port','80','--vpc-connector','connector-1']
+images: ['gcr.io/$PROJECT_ID/laravel:$_CI_COMMIT_SHA','--allow-unauthenticated']
+logsBucket: 'gs://alevz-demo-buildlog/laravel-log'
